@@ -1,0 +1,240 @@
+{
+  "meta": {
+    "title": "CPU Analyzer — Org. Computador 2025-3",
+    "description": "Real-time CPU / Memory / I/O analysis platform"
+  },
+  "sidebar": {
+    "title": "CPU Analyzer",
+    "subtitle": "Org. Computador 2025-3"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "cpu": "CPU",
+    "memory": "Memory",
+    "io": "I/O",
+    "processes": "Processes",
+    "simulation": "Simulation",
+    "logs": "Logs",
+    "technologies": "Technologies"
+  },
+  "topbar": {
+    "lastUpdate": "Last update:",
+    "waiting": "Waiting for data...",
+    "reconnect": "Reconnect",
+    "status": {
+      "connected": "Live",
+      "connecting": "Connecting...",
+      "reconnecting": "Reconnecting...",
+      "failed": "Disconnected"
+    }
+  },
+  "common": {
+    "waitingForData": "Waiting for data...",
+    "noData": "No data",
+    "cores": "cores",
+    "running": "running"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "description": "Real-time system performance overview",
+    "cards": {
+      "cpuUsage": "CPU Usage",
+      "memory": "Memory",
+      "diskIo": "Disk I/O",
+      "processes": "Processes"
+    },
+    "charts": {
+      "cpuHistory": "CPU Utilization (60s)",
+      "memoryHistory": "Memory Usage (60s)"
+    },
+    "topProcesses": "Top Processes (by CPU)",
+    "cpuSubtitle": "{freq} MHz · {cores} cores",
+    "diskSubtitle": "R: {read}  W: {write}",
+    "procsSubtitle": "{count} running"
+  },
+  "cpu": {
+    "title": "CPU Monitor",
+    "description": "Utilization, frequency, per-core heatmap, and estimated instruction throughput",
+    "gauge": "CPU Usage",
+    "stats": {
+      "frequency": "Frequency",
+      "cores": "Cores",
+      "contextSwitches": "Context Switches",
+      "uptime": "Uptime",
+      "estimatedInstructions": "Est. Instructions",
+      "approxPerSec": "approx / sec",
+      "userSystem": "User / System"
+    },
+    "charts": {
+      "utilizationHistory": "Utilization History (60s)",
+      "cpuPercent": "CPU %",
+      "perCoreTitle": "Per-Core Utilization",
+      "breakdownTitle": "CPU Time Breakdown",
+      "user": "User",
+      "system": "System",
+      "idle": "Idle"
+    },
+    "footnote": "* Estimated instructions = cpu% × freq_MHz × interval × IPC(2.5). Simulation-derived approximation."
+  },
+  "memory": {
+    "title": "Memory Monitor",
+    "description": "RAM usage, swap, simulated read/write ops, and DRAM latency model",
+    "gauge": "RAM Usage",
+    "stats": {
+      "totalRam": "Total RAM",
+      "available": "Available",
+      "used": "Used",
+      "cached": "Cached",
+      "swapUsed": "Swap Used",
+      "simLatency": "Sim. Latency",
+      "dramPressure": "DRAM pressure model",
+      "swapOf": "{pct}% of {total}"
+    },
+    "charts": {
+      "usageHistory": "Memory Usage History (60s)",
+      "ramPercent": "RAM %",
+      "opsTitle": "Memory Operations / sec",
+      "reads": "Reads",
+      "writes": "Writes",
+      "latencyTitle": "Simulated DRAM Latency (ns)",
+      "latency": "Latency"
+    },
+    "footnote": "* Latency model: 0-60%→80ns, 60-80%→120ns, 80-95%→200ns, 95%+→400ns"
+  },
+  "io": {
+    "title": "I/O Monitor",
+    "description": "Disk throughput, network traffic, and simulated device activity",
+    "stats": {
+      "diskRead": "Disk Read",
+      "diskWrite": "Disk Write",
+      "readOps": "Read Ops/s",
+      "writeOps": "Write Ops/s",
+      "netSent": "Net Sent",
+      "netRecv": "Net Recv",
+      "pktsSent": "Pkts Sent/s",
+      "pktsRecv": "Pkts Recv/s"
+    },
+    "charts": {
+      "diskTitle": "Disk I/O (bytes/sec)",
+      "read": "Read",
+      "write": "Write",
+      "netTitle": "Network I/O (bytes/sec)",
+      "sent": "Sent",
+      "recv": "Recv"
+    },
+    "devices": {
+      "title": "Simulated Devices",
+      "active": "Active",
+      "idle": "Idle",
+      "opsPerSec": "Ops/sec",
+      "throughput": "Throughput",
+      "latency": "Latency"
+    },
+    "waitingForData": "Waiting for data..."
+  },
+  "processes": {
+    "title": "Processes",
+    "description": "Active processes, thread details, and priority — click a row to expand threads",
+    "stats": {
+      "totalShown": "Total (shown)",
+      "runningSlashSleeping": "Running / Sleeping",
+      "totalThreads": "Total Threads"
+    },
+    "table": {
+      "pid": "PID",
+      "name": "Name",
+      "cpuPercent": "CPU %",
+      "memPercent": "MEM %",
+      "threads": "Threads",
+      "priority": "Priority",
+      "status": "Status",
+      "threadsLabel": "Threads:",
+      "tid": "TID",
+      "usr": "usr",
+      "sys": "sys"
+    },
+    "status": {
+      "running": "running",
+      "sleeping": "sleeping"
+    },
+    "empty": "Waiting for process data..."
+  },
+  "simulation": {
+    "title": "Workload Simulation",
+    "description": "Run CPU, memory, parallel, and AI workloads and observe their impact in real time",
+    "controls": {
+      "title": "Workload Configuration",
+      "workloadType": "Workload Type",
+      "intensity": "Intensity:",
+      "duration": "Duration:",
+      "seconds": "s",
+      "low": "Low",
+      "high": "High",
+      "start": "Start",
+      "running": "Running...",
+      "stop": "Stop"
+    },
+    "liveImpact": "Live Impact",
+    "cpuChart": "CPU During Simulation",
+    "memoryChart": "Memory During Simulation",
+    "feed": {
+      "title": "Simulation Output",
+      "clear": "Clear",
+      "empty": "No simulation running. Start a workload to see live output."
+    },
+    "workloads": {
+      "cpu_prime": "CPU — Prime Sieve",
+      "cpu_fibonacci": "CPU — Fibonacci",
+      "cpu_sort": "CPU — Quicksort",
+      "memory_sequential": "Memory — Sequential",
+      "memory_random": "Memory — Random Access",
+      "parallel": "Parallel — Multi-thread",
+      "ai_matrix": "AI — Matrix Multiply",
+      "ai_kmeans": "AI — K-Means Clustering",
+      "ai_nn": "AI — Neural Network (XOR)"
+    }
+  },
+  "logs": {
+    "title": "Execution Logs",
+    "description": "Backend log ring buffer — auto-refreshes every 5 seconds",
+    "allLevels": "All Levels",
+    "refresh": "Refresh",
+    "entries": "entries",
+    "empty": "No log entries.",
+    "limits": {
+      "last50": "Last 50",
+      "last100": "Last 100",
+      "last200": "Last 200",
+      "last500": "Last 500"
+    }
+  },
+  "heatmap": {
+    "noData": "No core data",
+    "coreLabel": "C{id}",
+    "tooltip": "Core {id}: {pct}%"
+  },
+  "technologies": {
+    "title": "Technologies",
+    "description": "Every library, framework, and tool used in this platform — frontend and backend",
+    "sections": {
+      "backend": "Backend",
+      "frontend": "Frontend"
+    },
+    "categories": {
+      "framework": "Framework",
+      "runtime": "Runtime",
+      "server": "ASGI Server",
+      "system": "System Metrics",
+      "scientific": "Scientific Computing",
+      "validation": "Data Validation",
+      "protocol": "Protocol",
+      "stateManagement": "State Management",
+      "charts": "Charting",
+      "styling": "Styling",
+      "icons": "Icons",
+      "i18n": "Internationalization",
+      "utilities": "Utilities",
+      "language": "Language"
+    }
+  }
+}

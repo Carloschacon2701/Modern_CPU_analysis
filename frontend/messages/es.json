@@ -1,0 +1,240 @@
+{
+  "meta": {
+    "title": "Analizador CPU — Org. Computador 2025-3",
+    "description": "Plataforma de análisis CPU / Memoria / E/S en tiempo real"
+  },
+  "sidebar": {
+    "title": "Analizador CPU",
+    "subtitle": "Org. Computador 2025-3"
+  },
+  "nav": {
+    "dashboard": "Panel",
+    "cpu": "CPU",
+    "memory": "Memoria",
+    "io": "E/S",
+    "processes": "Procesos",
+    "simulation": "Simulación",
+    "logs": "Registros",
+    "technologies": "Tecnologías"
+  },
+  "topbar": {
+    "lastUpdate": "Última actualización:",
+    "waiting": "Esperando datos...",
+    "reconnect": "Reconectar",
+    "status": {
+      "connected": "En vivo",
+      "connecting": "Conectando...",
+      "reconnecting": "Reconectando...",
+      "failed": "Desconectado"
+    }
+  },
+  "common": {
+    "waitingForData": "Esperando datos...",
+    "noData": "Sin datos",
+    "cores": "núcleos",
+    "running": "en ejecución"
+  },
+  "dashboard": {
+    "title": "Panel",
+    "description": "Resumen de rendimiento del sistema en tiempo real",
+    "cards": {
+      "cpuUsage": "Uso de CPU",
+      "memory": "Memoria",
+      "diskIo": "E/S de Disco",
+      "processes": "Procesos"
+    },
+    "charts": {
+      "cpuHistory": "Utilización CPU (60s)",
+      "memoryHistory": "Uso de Memoria (60s)"
+    },
+    "topProcesses": "Procesos Principales (por CPU)",
+    "cpuSubtitle": "{freq} MHz · {cores} núcleos",
+    "diskSubtitle": "L: {read}  E: {write}",
+    "procsSubtitle": "{count} en ejecución"
+  },
+  "cpu": {
+    "title": "Monitor de CPU",
+    "description": "Utilización, frecuencia, mapa de calor por núcleo y estimación de instrucciones",
+    "gauge": "Uso de CPU",
+    "stats": {
+      "frequency": "Frecuencia",
+      "cores": "Núcleos",
+      "contextSwitches": "Cambios de Contexto",
+      "uptime": "Tiempo activo",
+      "estimatedInstructions": "Instr. Estimadas",
+      "approxPerSec": "aprox / seg",
+      "userSystem": "Usuario / Sistema"
+    },
+    "charts": {
+      "utilizationHistory": "Historial de Utilización (60s)",
+      "cpuPercent": "CPU %",
+      "perCoreTitle": "Utilización por Núcleo",
+      "breakdownTitle": "Desglose de Tiempo CPU",
+      "user": "Usuario",
+      "system": "Sistema",
+      "idle": "Inactivo"
+    },
+    "footnote": "* Instrucciones estimadas = cpu% × frec_MHz × intervalo × IPC(2.5). Aproximación derivada por simulación."
+  },
+  "memory": {
+    "title": "Monitor de Memoria",
+    "description": "Uso de RAM, swap, operaciones R/E simuladas y modelo de latencia DRAM",
+    "gauge": "Uso de RAM",
+    "stats": {
+      "totalRam": "RAM Total",
+      "available": "Disponible",
+      "used": "Usada",
+      "cached": "En Caché",
+      "swapUsed": "Swap Usada",
+      "simLatency": "Latencia Sim.",
+      "dramPressure": "Modelo de presión DRAM",
+      "swapOf": "{pct}% de {total}"
+    },
+    "charts": {
+      "usageHistory": "Historial de Uso de Memoria (60s)",
+      "ramPercent": "RAM %",
+      "opsTitle": "Operaciones de Memoria / seg",
+      "reads": "Lecturas",
+      "writes": "Escrituras",
+      "latencyTitle": "Latencia DRAM Simulada (ns)",
+      "latency": "Latencia"
+    },
+    "footnote": "* Modelo de latencia: 0-60%→80ns, 60-80%→120ns, 80-95%→200ns, 95%+→400ns"
+  },
+  "io": {
+    "title": "Monitor de E/S",
+    "description": "Rendimiento de disco, tráfico de red y actividad de dispositivos simulados",
+    "stats": {
+      "diskRead": "Lectura Disco",
+      "diskWrite": "Escritura Disco",
+      "readOps": "Ops Lectura/s",
+      "writeOps": "Ops Escritura/s",
+      "netSent": "Red Enviada",
+      "netRecv": "Red Recibida",
+      "pktsSent": "Pqts Enviados/s",
+      "pktsRecv": "Pqts Recibidos/s"
+    },
+    "charts": {
+      "diskTitle": "E/S de Disco (bytes/seg)",
+      "read": "Lectura",
+      "write": "Escritura",
+      "netTitle": "E/S de Red (bytes/seg)",
+      "sent": "Enviado",
+      "recv": "Recibido"
+    },
+    "devices": {
+      "title": "Dispositivos Simulados",
+      "active": "Activo",
+      "idle": "Inactivo",
+      "opsPerSec": "Ops/seg",
+      "throughput": "Rendimiento",
+      "latency": "Latencia"
+    },
+    "waitingForData": "Esperando datos..."
+  },
+  "processes": {
+    "title": "Procesos",
+    "description": "Procesos activos, detalles de hilos y prioridad — clic en una fila para expandir hilos",
+    "stats": {
+      "totalShown": "Total (mostrado)",
+      "runningSlashSleeping": "Ejecutando / Durmiendo",
+      "totalThreads": "Hilos Totales"
+    },
+    "table": {
+      "pid": "PID",
+      "name": "Nombre",
+      "cpuPercent": "CPU %",
+      "memPercent": "MEM %",
+      "threads": "Hilos",
+      "priority": "Prioridad",
+      "status": "Estado",
+      "threadsLabel": "Hilos:",
+      "tid": "HID",
+      "usr": "usr",
+      "sys": "sis"
+    },
+    "status": {
+      "running": "ejecutando",
+      "sleeping": "durmiendo"
+    },
+    "empty": "Esperando datos de procesos..."
+  },
+  "simulation": {
+    "title": "Simulación de Carga",
+    "description": "Ejecuta cargas de CPU, memoria, paralelas e IA y observa su impacto en tiempo real",
+    "controls": {
+      "title": "Configuración de Carga",
+      "workloadType": "Tipo de Carga",
+      "intensity": "Intensidad:",
+      "duration": "Duración:",
+      "seconds": "s",
+      "low": "Baja",
+      "high": "Alta",
+      "start": "Iniciar",
+      "running": "Ejecutando...",
+      "stop": "Detener"
+    },
+    "liveImpact": "Impacto en Vivo",
+    "cpuChart": "CPU Durante Simulación",
+    "memoryChart": "Memoria Durante Simulación",
+    "feed": {
+      "title": "Salida de Simulación",
+      "clear": "Limpiar",
+      "empty": "Sin simulación activa. Inicia una carga para ver la salida en vivo."
+    },
+    "workloads": {
+      "cpu_prime": "CPU — Criba de Primos",
+      "cpu_fibonacci": "CPU — Fibonacci",
+      "cpu_sort": "CPU — Quicksort",
+      "memory_sequential": "Memoria — Secuencial",
+      "memory_random": "Memoria — Acceso Aleatorio",
+      "parallel": "Paralelo — Multi-hilo",
+      "ai_matrix": "IA — Multiplicación Matricial",
+      "ai_kmeans": "IA — Agrupamiento K-Medias",
+      "ai_nn": "IA — Red Neuronal (XOR)"
+    }
+  },
+  "logs": {
+    "title": "Registros de Ejecución",
+    "description": "Buffer circular de registros del backend — se actualiza cada 5 segundos",
+    "allLevels": "Todos los Niveles",
+    "refresh": "Actualizar",
+    "entries": "entradas",
+    "empty": "Sin entradas de registro.",
+    "limits": {
+      "last50": "Últimos 50",
+      "last100": "Últimos 100",
+      "last200": "Últimos 200",
+      "last500": "Últimos 500"
+    }
+  },
+  "heatmap": {
+    "noData": "Sin datos de núcleo",
+    "coreLabel": "N{id}",
+    "tooltip": "Núcleo {id}: {pct}%"
+  },
+  "technologies": {
+    "title": "Tecnologías",
+    "description": "Cada librería, framework y herramienta usada en esta plataforma — frontend y backend",
+    "sections": {
+      "backend": "Backend",
+      "frontend": "Frontend"
+    },
+    "categories": {
+      "framework": "Framework",
+      "runtime": "Entorno de Ejecución",
+      "server": "Servidor ASGI",
+      "system": "Métricas del Sistema",
+      "scientific": "Computación Científica",
+      "validation": "Validación de Datos",
+      "protocol": "Protocolo",
+      "stateManagement": "Gestión de Estado",
+      "charts": "Gráficas",
+      "styling": "Estilos",
+      "icons": "Iconos",
+      "i18n": "Internacionalización",
+      "utilities": "Utilidades",
+      "language": "Lenguaje"
+    }
+  }
+}
