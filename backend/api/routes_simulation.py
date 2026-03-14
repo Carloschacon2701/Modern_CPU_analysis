@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException
 from models.simulation_schema import SimulationRequest, WORKLOAD_TYPES
-from simulation.workload_runner import start_workload, stop_workload, get_status, list_runs
+from simulation.workload_runner import start_workload, stop_workload, get_status, list_runs, get_impact
 
 router = APIRouter(prefix="/api/simulation", tags=["simulation"])
 
@@ -49,3 +49,25 @@ async def runs():
 @router.get("/workloads")
 async def workload_types():
     return {"workload_types": WORKLOAD_TYPES}
+
+
+@router.get("/impact/{run_id}")
+async def impact(run_id: str):
+    """
+    Returns time-series metric samples captured every 500 ms during the workload.
+    Each sample contains: elapsed_s, cpu_percent, memory_percent,
+    disk_read_bps, disk_write_bps, net_sent_bps, net_recv_bps, total_thread_count.
+    Available while the workload is still running (partial) or after it completes.
+    """
+    data = get_impact(run_id)
+    if data is None:
+        raise HTTPException(status_code=404, detail=f"No impact data for run {run_id}")
+    status = get_status(run_id)
+    return {
+        "run_id": run_id,
+        "workload_type": status.workload_type if status else "unknown",
+        "status": status.status if status else "unknown",
+        "sample_count": len(data),
+        "interval_s": 0.5,
+        "samples": data,
+    }

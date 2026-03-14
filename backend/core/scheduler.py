@@ -21,6 +21,9 @@ async def lifespan(_app):
     global _collection_task
     logger.info("Starting CPU Analyzer backend...")
 
+    # Capture the running loop so broadcast_sync() can use it from worker threads.
+    broadcaster.set_loop(asyncio.get_event_loop())
+
     # Wire simulation events → WebSocket broadcaster
     workload_runner.set_broadcast_callback(broadcaster.broadcast_sync)
 
