@@ -21,12 +21,12 @@ export default function SimulationPage() {
   const cpuHistory = useMetricsStore((s) => s.cpuHistory);
   const memHistory = useMetricsStore((s) => s.memoryHistory);
 
-  const handleStart = async (workload: string, intensity: number, duration: number) => {
+  const handleStart = async (workload: string, intensity: number, duration: number, profile: string = "real_machine") => {
     try {
       const res = await fetch("/api/simulation/start", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ workload_type: workload, intensity, duration_seconds: duration }),
+        body: JSON.stringify({ workload_type: workload, intensity, duration_seconds: duration, hardware_profile: profile }),
       });
       if (res.ok) {
         const data = await res.json();

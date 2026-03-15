@@ -11,6 +11,7 @@ from typing import Callable
 import psutil
 
 from monitors import memory_monitor
+from simulation.hardware_profiles import HardwareProfile, PROFILES
 from utils.logger import get_logger
 
 logger = get_logger("simulation.memory")
@@ -22,11 +23,13 @@ def run_sequential(
     intensity: int,
     duration_s: float,
     emit: Callable[[str, dict], None],
+    profile: HardwareProfile = None,
 ):
+    profile = profile or PROFILES["real_machine"]
     size_mb = 50 * intensity
     size_bytes = size_mb * MB
-    logger.info(f"Memory sequential starting: size={size_mb}MB, duration={duration_s}s")
-    emit("started", {"algorithm": "memory_sequential", "size_mb": size_mb})
+    logger.info(f"Memory sequential starting: size={size_mb}MB, duration={duration_s}s, profile={profile.id}")
+    emit("started", {"algorithm": "memory_sequential", "size_mb": size_mb, "hardware_profile": profile.id})
 
     buf = bytearray(size_bytes)
     start = time.monotonic()
@@ -34,6 +37,7 @@ def run_sequential(
     process = psutil.Process()
 
     while time.monotonic() - start < duration_s:
+        iter_start = time.monotonic()
         # Sequential write
         for i in range(0, size_bytes, 4096):
             buf[i] = (iterations + i) & 0xFF
@@ -45,6 +49,8 @@ def run_sequential(
             checksum += buf[i]
             memory_monitor.increment_read_ops(1)
 
+        iter_elapsed = time.monotonic() - iter_start
+        profile.throttle(iter_elapsed)
         iterations += 1
         rss_mb = process.memory_info().rss / MB
         elapsed = round(time.monotonic() - start, 2)
@@ -68,11 +74,13 @@ def run_random(
     intensity: int,
     duration_s: float,
     emit: Callable[[str, dict], None],
+    profile: HardwareProfile = None,
 ):
+    profile = profile or PROFILES["real_machine"]
     size_mb = 30 * intensity
     size_bytes = size_mb * MB
-    logger.info(f"Memory random starting: size={size_mb}MB, duration={duration_s}s")
-    emit("started", {"algorithm": "memory_random", "size_mb": size_mb})
+    logger.info(f"Memory random starting: size={size_mb}MB, duration={duration_s}s, profile={profile.id}")
+    emit("started", {"algorithm": "memory_random", "size_mb": size_mb, "hardware_profile": profile.id})
 
     buf = bytearray(size_bytes)
     indices = random.sample(range(0, size_bytes, 64), min(50_000, size_bytes // 64))
@@ -81,12 +89,15 @@ def run_random(
     process = psutil.Process()
 
     while time.monotonic() - start < duration_s:
+        iter_start = time.monotonic()
         random.shuffle(indices)
         for idx in indices:
             buf[idx] = (buf[idx] + 1) & 0xFF
             memory_monitor.increment_read_ops(1)
             memory_monitor.increment_write_ops(1)
 
+        iter_elapsed = time.monotonic() - iter_start
+        profile.throttle(iter_elapsed)
         iterations += 1
         rss_mb = process.memory_info().rss / MB
         elapsed = round(time.monotonic() - start, 2)

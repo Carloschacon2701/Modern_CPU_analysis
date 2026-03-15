@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Play, Square } from "lucide-react";
+import { HardwareProfileSelector } from "./HardwareProfileSelector";
 
 interface SimulationControlsProps {
-  onStart: (workload: string, intensity: number, duration: number) => void;
+  onStart: (workload: string, intensity: number, duration: number, profile: string) => void;
   onStop: (runId: string) => void;
   activeRunId: string | null;
   isRunning: boolean;
@@ -21,6 +22,7 @@ export function SimulationControls({
   const [workload, setWorkload] = useState("ai_matrix");
   const [intensity, setIntensity] = useState(5);
   const [duration, setDuration] = useState(30);
+  const [profile, setProfile] = useState("real_machine");
 
   const workloadKeys = [
     "cpu_prime", "cpu_fibonacci", "cpu_sort",
@@ -32,6 +34,12 @@ export function SimulationControls({
   return (
     <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 space-y-4">
       <h3 className="text-white font-semibold text-sm">{t("controls.title")}</h3>
+
+      <HardwareProfileSelector
+        value={profile}
+        onChange={setProfile}
+        disabled={isRunning}
+      />
 
       <div>
         <label className="text-gray-400 text-xs uppercase tracking-wide">
@@ -85,7 +93,7 @@ export function SimulationControls({
 
       <div className="flex gap-3">
         <button
-          onClick={() => onStart(workload, intensity, duration)}
+          onClick={() => onStart(workload, intensity, duration, profile)}
           disabled={isRunning}
           className="flex-1 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-lg px-4 py-2.5 text-sm font-medium transition-colors"
         >

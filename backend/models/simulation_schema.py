@@ -28,6 +28,10 @@ class SimulationRequest(BaseModel):
     duration_seconds: int = Field(
         30, ge=5, le=120, description="Duration in seconds"
     )
+    hardware_profile: str = Field(
+        "real_machine",
+        description="Hardware profile to simulate (see /api/simulation/profiles)",
+    )
 
 
 class SimulationStatus(BaseModel):

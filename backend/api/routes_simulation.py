@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException
 from models.simulation_schema import SimulationRequest, WORKLOAD_TYPES
+from simulation.hardware_profiles import PROFILES
 from simulation.workload_runner import start_workload, stop_workload, get_status, list_runs, get_impact
 
 router = APIRouter(prefix="/api/simulation", tags=["simulation"])
@@ -21,8 +22,18 @@ async def start(request: SimulationRequest):
             status_code=400,
             detail=f"Invalid workload_type. Must be one of: {WORKLOAD_TYPES}",
         )
+    if request.hardware_profile not in PROFILES:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid hardware_profile. Must be one of: {list(PROFILES.keys())}",
+        )
     run_id = start_workload(request.model_dump())
-    return {"run_id": run_id, "status": "running", "workload_type": request.workload_type}
+    return {
+        "run_id": run_id,
+        "status": "running",
+        "workload_type": request.workload_type,
+        "hardware_profile": request.hardware_profile,
+    }
 
 
 @router.post("/stop/{run_id}")
@@ -49,6 +60,11 @@ async def runs():
 @router.get("/workloads")
 async def workload_types():
     return {"workload_types": WORKLOAD_TYPES}
+
+
+@router.get("/profiles")
+async def hardware_profiles():
+    return {"profiles": [p.to_dict() for p in PROFILES.values()]}
 
 
 @router.get("/impact/{run_id}")

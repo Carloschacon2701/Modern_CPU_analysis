@@ -15,6 +15,7 @@ from typing import Callable
 
 import numpy as np
 
+from simulation.hardware_profiles import HardwareProfile, PROFILES
 from utils.logger import get_logger
 
 logger = get_logger("simulation.ai")
@@ -26,21 +27,26 @@ def run_matrix_multiply(
     intensity: int,
     duration_s: float,
     emit: Callable[[str, dict], None],
+    profile: HardwareProfile = None,
 ):
+    profile = profile or PROFILES["real_machine"]
     size = 128 * intensity
-    logger.info(f"Matrix multiply starting: size={size}x{size}, duration={duration_s}s")
-    emit("started", {"algorithm": "matrix_multiply", "matrix_size": size})
+    logger.info(f"Matrix multiply starting: size={size}x{size}, duration={duration_s}s, profile={profile.id}")
+    emit("started", {"algorithm": "matrix_multiply", "matrix_size": size, "hardware_profile": profile.id})
 
     start = time.monotonic()
     iterations = 0
     total_flops = 0
 
     while time.monotonic() - start < duration_s:
+        iter_start = time.monotonic()
         A = np.random.rand(size, size).astype(np.float32)
         B = np.random.rand(size, size).astype(np.float32)
         C = A @ B
         flops = 2 * size**3
         total_flops += flops
+        iter_elapsed = time.monotonic() - iter_start
+        profile.throttle(iter_elapsed)
         iterations += 1
         elapsed = time.monotonic() - start
         gflops = total_flops / elapsed / 1e9
@@ -84,11 +90,13 @@ def run_kmeans(
     intensity: int,
     duration_s: float,
     emit: Callable[[str, dict], None],
+    profile: HardwareProfile = None,
 ):
+    profile = profile or PROFILES["real_machine"]
     n_points = 2000 * intensity
     k = 5 + intensity // 2
-    logger.info(f"K-means starting: n_points={n_points}, k={k}, duration={duration_s}s")
-    emit("started", {"algorithm": "kmeans", "n_points": n_points, "k": k})
+    logger.info(f"K-means starting: n_points={n_points}, k={k}, duration={duration_s}s, profile={profile.id}")
+    emit("started", {"algorithm": "kmeans", "n_points": n_points, "k": k, "hardware_profile": profile.id})
 
     np.random.seed(42)
     # Generate clustered data
@@ -101,6 +109,7 @@ def run_kmeans(
     runs = 0
 
     while time.monotonic() - start < duration_s:
+        iter_start = time.monotonic()
         centroids = X[np.random.choice(len(X), k, replace=False)]
         prev_inertia = float("inf")
 
@@ -125,6 +134,8 @@ def run_kmeans(
             if delta < 1e-4:
                 break
 
+        iter_elapsed = time.monotonic() - iter_start
+        profile.throttle(iter_elapsed)
         runs += 1
 
     emit(
@@ -148,7 +159,9 @@ def run_neural_network(
     intensity: int,
     duration_s: float,
     emit: Callable[[str, dict], None],
+    profile: HardwareProfile = None,
 ):
+    profile = profile or PROFILES["real_machine"]
     hidden = 8 + intensity * 2
     epochs_per_run = 1000 * intensity
     lr = 0.1
@@ -164,6 +177,7 @@ def run_neural_network(
             "activation": "sigmoid",
             "loss": "MSE",
             "learning_rate": lr,
+            "hardware_profile": profile.id,
         },
     )
 
@@ -175,6 +189,7 @@ def run_neural_network(
     runs = 0
 
     while time.monotonic() - start < duration_s:
+        iter_start = time.monotonic()
         np.random.seed(runs)
         W1 = np.random.randn(2, hidden).astype(np.float32) * 0.5
         b1 = np.zeros((1, hidden), dtype=np.float32)
@@ -217,6 +232,8 @@ def run_neural_network(
                     },
                 )
 
+        iter_elapsed = time.monotonic() - iter_start
+        profile.throttle(iter_elapsed)
         runs += 1
 
     emit(

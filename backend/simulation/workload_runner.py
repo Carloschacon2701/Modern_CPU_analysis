@@ -17,6 +17,7 @@ from typing import Any, Callable, Optional
 import psutil
 
 from models.simulation_schema import SimulationEvent, SimulationStatus
+from simulation.hardware_profiles import PROFILES
 from utils.logger import get_logger
 from utils.time_utils import now_iso
 
@@ -141,6 +142,8 @@ def _run_workload(run_id: str, request_dict: dict):
     workload_type = request_dict["workload_type"]
     intensity = request_dict["intensity"]
     duration_s = float(request_dict["duration_seconds"])
+    profile_id = request_dict.get("hardware_profile", "real_machine")
+    profile = PROFILES.get(profile_id, PROFILES["real_machine"])
 
     emit = lambda event, payload: _emit(run_id, workload_type, event, payload)
 
@@ -154,31 +157,31 @@ def _run_workload(run_id: str, request_dict: dict):
     try:
         if workload_type == "cpu_prime":
             from simulation.cpu_workload import run_prime_sieve
-            run_prime_sieve(intensity, duration_s, emit)
+            run_prime_sieve(intensity, duration_s, emit, profile)
         elif workload_type == "cpu_fibonacci":
             from simulation.cpu_workload import run_fibonacci
-            run_fibonacci(intensity, duration_s, emit)
+            run_fibonacci(intensity, duration_s, emit, profile)
         elif workload_type == "cpu_sort":
             from simulation.cpu_workload import run_sort
-            run_sort(intensity, duration_s, emit)
+            run_sort(intensity, duration_s, emit, profile)
         elif workload_type == "memory_sequential":
             from simulation.memory_workload import run_sequential
-            run_sequential(intensity, duration_s, emit)
+            run_sequential(intensity, duration_s, emit, profile)
         elif workload_type == "memory_random":
             from simulation.memory_workload import run_random
-            run_random(intensity, duration_s, emit)
+            run_random(intensity, duration_s, emit, profile)
         elif workload_type == "parallel":
             from simulation.parallel_workload import run_parallel
-            run_parallel(intensity, duration_s, emit)
+            run_parallel(intensity, duration_s, emit, profile)
         elif workload_type == "ai_matrix":
             from simulation.ai_workload import run_matrix_multiply
-            run_matrix_multiply(intensity, duration_s, emit)
+            run_matrix_multiply(intensity, duration_s, emit, profile)
         elif workload_type == "ai_kmeans":
             from simulation.ai_workload import run_kmeans
-            run_kmeans(intensity, duration_s, emit)
+            run_kmeans(intensity, duration_s, emit, profile)
         elif workload_type == "ai_nn":
             from simulation.ai_workload import run_neural_network
-            run_neural_network(intensity, duration_s, emit)
+            run_neural_network(intensity, duration_s, emit, profile)
         else:
             emit("error", {"message": f"Unknown workload type: {workload_type}"})
             return

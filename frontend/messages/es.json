@@ -165,6 +165,7 @@
     "controls": {
       "title": "Configuración de Carga",
       "workloadType": "Tipo de Carga",
+      "hardwareProfile": "Perfil de Hardware",
       "intensity": "Intensidad:",
       "duration": "Duración:",
       "seconds": "s",
@@ -173,6 +174,39 @@
       "start": "Iniciar",
       "running": "Ejecutando...",
       "stop": "Detener"
+    },
+    "profiles": {
+      "real_machine": {
+        "name": "Tu Máquina (Real)",
+        "description": "Métricas reales de tu CPU sin modificación"
+      },
+      "raspberry_pi4": {
+        "name": "Raspberry Pi 4",
+        "description": "ARM Cortex-A72 · 4 núcleos · 1.8 GHz · 4 GB LPDDR4"
+      },
+      "old_laptop_2012": {
+        "name": "Laptop Antiguo (2012)",
+        "description": "Intel Core i3-2310M · 2 núcleos · 1.6 GHz · 4 GB DDR3"
+      },
+      "cloud_t3micro": {
+        "name": "Cloud t3.micro (AWS)",
+        "description": "2 vCPUs · 2.5 GHz · 1 GB DDR4 · rendimiento explosivo"
+      },
+      "server_xeon": {
+        "name": "Servidor (Xeon E5)",
+        "description": "Intel Xeon E5-2697 · 16 núcleos · 3.6 GHz · 128 GB ECC DDR4"
+      },
+      "gaming_desktop_i9": {
+        "name": "Gaming Desktop (i9-13900K)",
+        "description": "Intel i9-13900K · 24 núcleos · 5.8 GHz · 32 GB DDR5"
+      }
+    },
+    "profileSpecs": {
+      "cores": "{n} núcleos",
+      "freq": "{mhz} MHz",
+      "ram": "{mb} MB RAM",
+      "factor": "{x}× velocidad",
+      "realMachine": "Hardware real — sin ralentización aplicada"
     },
     "liveImpact": "Impacto en Vivo",
     "cpuChart": "CPU Durante Simulación",

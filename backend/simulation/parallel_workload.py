@@ -11,6 +11,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Callable
 
 from simulation.cpu_workload import sieve_of_eratosthenes
+from simulation.hardware_profiles import HardwareProfile, PROFILES
 from utils.logger import get_logger
 
 logger = get_logger("simulation.parallel")
@@ -29,17 +30,27 @@ def run_parallel(
     intensity: int,
     duration_s: float,
     emit: Callable[[str, dict], None],
+    profile: HardwareProfile = None,
 ):
-    num_workers = min(os.cpu_count() or 4, 4 + intensity // 3)
+    profile = profile or PROFILES["real_machine"]
+    # For simulated hardware, cap workers to the profile's core count
+    real_cores = os.cpu_count() or 4
+    profile_cores = profile.cpu_cores if profile.cpu_cores > 0 else real_cores
+    num_workers = min(real_cores, profile_cores, 4 + intensity // 3)
     limit = 50_000 * intensity
     chunk_size = limit // num_workers
 
     logger.info(
-        f"Parallel workload starting: workers={num_workers}, limit={limit}, duration={duration_s}s"
+        f"Parallel workload starting: workers={num_workers}, limit={limit}, duration={duration_s}s, profile={profile.id}"
     )
     emit(
         "started",
-        {"algorithm": "parallel_sieve", "workers": num_workers, "limit": limit},
+        {
+            "algorithm": "parallel_sieve",
+            "workers": num_workers,
+            "limit": limit,
+            "hardware_profile": profile.id,
+        },
     )
 
     wall_start = time.monotonic()
@@ -61,7 +72,8 @@ def run_parallel(
                 chunk_id, count = future.result()
                 total_primes += count
 
-        iter_elapsed = round(time.monotonic() - iter_start, 3)
+        iter_elapsed = time.monotonic() - iter_start
+        profile.throttle(iter_elapsed)
         iterations += 1
         elapsed = round(time.monotonic() - wall_start, 2)
         emit(
@@ -70,7 +82,7 @@ def run_parallel(
                 "iteration": iterations,
                 "workers": num_workers,
                 "primes_found": total_primes,
-                "iter_duration_s": iter_elapsed,
+                "iter_duration_s": round(iter_elapsed, 3),
                 "elapsed_s": elapsed,
             },
         )
