@@ -273,9 +273,15 @@
   "technologies": {
     "title": "Tecnologías",
     "description": "Cada librería, framework y herramienta usada en esta plataforma — frontend y backend",
+    "count": "{count} tecnologías",
     "sections": {
       "backend": "Backend",
       "frontend": "Frontend"
+    },
+    "columns": {
+      "what": "Qué es",
+      "why": "Por qué",
+      "how": "Cómo"
     },
     "categories": {
       "framework": "Framework",
@@ -292,6 +298,83 @@
       "i18n": "Internacionalización",
       "utilities": "Utilidades",
       "language": "Lenguaje"
+    },
+    "items": {
+      "python": {
+        "what": "Lenguaje de programación de alto nivel de propósito general usado para todo el backend.",
+        "why": "Excelente ecosistema para programación de sistemas (psutil), computación científica (numpy) y APIs web (FastAPI). La sintaxis legible acelera el desarrollo.",
+        "how": "Todos los módulos del backend, monitores, cargas de trabajo de simulación y rutas API están escritos en Python. El entorno virtual en backend/.venv aísla las dependencias."
+      },
+      "fastapi": {
+        "what": "Framework web Python asíncrono moderno para construir APIs REST y endpoints WebSocket.",
+        "why": "El soporte nativo async/await comparte un mismo bucle de eventos entre la transmisión WebSocket y el manejo de solicitudes HTTP — sin hilos adicionales ni proxies. Genera automáticamente documentación OpenAPI en /docs.",
+        "how": "Define todas las rutas REST (/api/metrics, /api/simulation, /api/logs) y el endpoint WebSocket (/ws/metrics). Usa modelos Pydantic para validación de solicitudes y respuestas. El gestor de contexto Lifespan inicia la tarea de recolección en segundo plano."
+      },
+      "uvicorn": {
+        "what": "Servidor ASGI ultrarrápido que ejecuta FastAPI en producción y desarrollo.",
+        "why": "ASGI (Interfaz de Pasarela de Servidor Asíncrono) es necesario para manejar conexiones WebSocket concurrentes junto con HTTP. Uvicorn usa uvloop y httptools para máximo rendimiento.",
+        "how": "Se lanza mediante uvicorn main:app --reload. Maneja HTTP/1.1, actualizaciones WebSocket, cierre controlado y recarga en caliente durante el desarrollo."
+      },
+      "psutil": {
+        "what": "Biblioteca multiplataforma para obtener información de utilización de procesos y sistema.",
+        "why": "Envuelve las llamadas al sistema específicas del OS (sistema de archivos proc en Linux, sysctl en macOS) en una API Python limpia. Funciona en macOS para desarrollo y Linux para despliegue sin cambios de código.",
+        "how": "Usado en los cuatro módulos de monitor: cpu_monitor.py (cpu_percent, cpu_freq, cpu_times), memory_monitor.py (virtual_memory, swap_memory), io_monitor.py (disk_io_counters, net_io_counters), process_monitor.py (process_iter, Process.threads)."
+      },
+      "numpy": {
+        "what": "Paquete fundamental para computación numérica en Python — arreglos N-dimensionales y álgebra lineal.",
+        "why": "Permite que las cargas de trabajo de IA ejecuten operaciones matriciales rápidas sin frameworks de ML pesados. El benchmark de multiplicación matricial (A @ B) usa rutinas BLAS optimizadas de numpy, generando presión medible en CPU y memoria.",
+        "how": "Usado en ai_workload.py para tres algoritmos: (1) multiplicación matricial de arreglos float32 de tamaño×tamaño, (2) iteración de Lloyd K-means usando np.linalg.norm, (3) mini red neuronal con activaciones sigmoid y retropropagación manual usando operaciones puras de numpy."
+      },
+      "pydantic": {
+        "what": "Biblioteca de validación de datos y serialización usando anotaciones de tipo Python.",
+        "why": "Garantiza que cada MetricsSnapshot enviado por WebSocket tenga tipos válidos. Las interfaces TypeScript en metrics-types.ts reflejan exactamente los modelos Pydantic — si el esquema Python cambia, TypeScript detectará la discrepancia.",
+        "how": "Todos los modelos de métricas (MetricsSnapshot, CpuSnapshot, MemorySnapshot, IoSnapshot, ProcessEntry) son BaseModels de Pydantic. model_dump() serializa a dict para transmisión JSON. Field() añade cadenas de documentación visibles en /docs."
+      },
+      "websockets": {
+        "what": "Protocolo de comunicación full-duplex sobre una única conexión TCP.",
+        "why": "Consultar el endpoint REST cada segundo crearía sobrecarga HTTP innecesaria e introduciría latencia. El envío push por WebSocket entrega métricas inmediatamente al recolectarlas, habilitando gráficas verdaderamente en tiempo real.",
+        "how": "Backend: endpoint FastAPI @app.websocket('/ws/metrics'). El broadcaster distribuye JSON a todos los clientes conectados usando asyncio.gather. Frontend: clase WebSocketClient personalizada en lib/websocket-client.ts con reconexión de retroceso exponencial."
+      },
+      "nextjs": {
+        "what": "Framework React con App Router, componentes de servidor, enrutamiento basado en archivos y optimizaciones integradas.",
+        "why": "App Router proporciona enrutamiento basado en locale (segmento [locale]) de forma nativa. next-intl se integra de manera natural. La reescritura en next.config.ts hace proxy de /api/* al backend Python, evitando problemas de CORS en desarrollo.",
+        "how": "Todas las páginas viven bajo app/[locale]/ para enrutamiento i18n. layout.tsx proporciona NextIntlClientProvider para traducciones. next.config.ts usa createNextIntlPlugin y reescrituras para hacer proxy de llamadas API."
+      },
+      "typescript": {
+        "what": "Superconjunto tipado de JavaScript que compila a JavaScript plano.",
+        "why": "El archivo metrics-types.ts refleja exactamente los modelos Pydantic de Python. TypeScript detecta discrepancias entre lo que envía el WebSocket y lo que esperan los componentes — crítico cuando el esquema del backend evoluciona.",
+        "how": "Todos los archivos .ts y .tsx usan TypeScript estricto. Los tipos de interfaz en lib/metrics-types.ts definen el contrato con el backend Python. Los tipos del store Zustand aseguran que las formas de datos correctas fluyan por todos los componentes de gráficas."
+      },
+      "recharts": {
+        "what": "Biblioteca de gráficas composable construida sobre React y D3.",
+        "why": "El modelo de componentes React se integra con el ciclo de renderizado de forma natural. A diferencia de Chart.js que requiere manipulación imperativa del canvas mediante refs, Recharts se re-renderiza cuando los datos cambian. isAnimationActive={false} en los componentes Line es crítico para actualizaciones a 1 Hz.",
+        "how": "TimeSeriesChart envuelve LineChart con una ventana deslizante de 60 puntos. GaugeChart usa RadialBarChart en modo semicírculo con interpolación de color. Todas las gráficas reciben datos directamente de los slices del store Zustand mediante hooks."
+      },
+      "zustand": {
+        "what": "Gestión de estado pequeña, rápida y escalable para React usando hooks.",
+        "why": "Redux añade mucho código repetitivo. React Context re-renderiza todo el subárbol en cada tick de WebSocket (1 Hz × todas las métricas = tartamudeo). Los selectores de igualdad superficial de Zustand aseguran que solo la gráfica suscrita a un slice específico se re-renderice cuando sus datos cambian.",
+        "how": "useMetricsStore en hooks/useMetricsStore.ts mantiene ventanas deslizantes (cpuHistory, memoryHistory, diskHistory, netHistory) y las últimas instantáneas. pushSnapshot() se llama desde useWebSocket.ts en cada mensaje de métricas entrante."
+      },
+      "tailwindcss": {
+        "what": "Framework CSS de utilidades para construir diseños personalizados rápidamente.",
+        "why": "Cero sobrecarga en tiempo de ejecución — todo el CSS se compila en tiempo de construcción. Los tokens de diseño consistentes (gray-900, indigo-600, etc.) crean un tema oscuro coherente en más de 20 componentes sin una sola clase CSS personalizada.",
+        "how": "globals.css importa @tailwindcss y reemplaza variables CSS para el fondo oscuro. Los archivos de componentes usan clases de utilidad directamente — no se necesitan módulos CSS ni styled-components."
+      },
+      "lucideReact": {
+        "what": "Biblioteca de iconos hermosa y consistente para React con más de 1000 iconos SVG.",
+        "why": "Tree-shakeable — solo los iconos importados se incluyen en el bundle. La cuadrícula 24×24 consistente coincide con el espaciado de Tailwind. Los iconos se usan como props en los componentes (MetricCard, Sidebar) manteniendo el diseño extensible.",
+        "how": "Cpu, MemoryStick, HardDrive, Activity, Play, ScrollText, LayoutDashboard, Layers, ChevronUp, ChevronDown, RefreshCw — todos importados individualmente y renderizados como <Icon size={16} />."
+      },
+      "nextIntl": {
+        "what": "Biblioteca de internacionalización diseñada específicamente para el App Router de Next.js.",
+        "why": "Soporte de primera clase para App Router con enrutamiento [locale] incorporado. Los componentes de servidor usan getTranslations(), los componentes cliente usan useTranslations() — misma API, sin código repetitivo de contexto. Los mensajes se cargan por solicitud, no en un bundle global.",
+        "how": "i18n/routing.ts define los locales ['en','es']. middleware.ts intercepta solicitudes y redirige / → /en. messages/en.json y messages/es.json contienen todas las cadenas de interfaz. El componente LanguageSwitcher actualiza el segmento de locale en la URL actual."
+      },
+      "clsx": {
+        "what": "Pequeña utilidad para construir cadenas de className condicionales.",
+        "why": "Reemplaza expresiones ternarias largas para clases CSS condicionales. Especialmente útil para insignias de estado (ejecutando→verde, durmiendo→amarillo, otro→gris) y puntos de estado de conexión.",
+        "how": "Usado en Sidebar (resaltado de enlace activo), ProcessTable (colores de insignias de estado), IoPanel (insignia activo/inactivo de dispositivo), TopBar (animación de punto de estado). clsx({ 'bg-green-900': running }) es más legible que las plantillas literales."
+      }
     }
   }
 }
